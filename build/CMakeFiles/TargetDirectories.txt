@@ -1,4 +1,0 @@
-/Users/nolansmeal/Desktop/ECE309-Project2/build/CMakeFiles/miniharness.dir
-/Users/nolansmeal/Desktop/ECE309-Project2/build/CMakeFiles/test_p2.dir
-/Users/nolansmeal/Desktop/ECE309-Project2/build/CMakeFiles/edit_cache.dir
-/Users/nolansmeal/Desktop/ECE309-Project2/build/CMakeFiles/rebuild_cache.dir
