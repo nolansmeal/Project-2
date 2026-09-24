@@ -4,6 +4,7 @@
 
 using namespace std;
 
+// Represents who sent a message
 enum class Role {
     System,
     User,
@@ -36,6 +37,7 @@ public:
     }
 
 private:
+    // Stores the message role & text
     Role role_;
     string content_;
 };

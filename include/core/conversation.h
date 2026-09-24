@@ -43,7 +43,12 @@ public:
 
 private:
 
-    Message* data_ = nullptr;
-    size_t size_ = 0;
-    size_t capacity_ = 0;
+    // Dynamic array that stores the messages
+    Message* data_ = nullptr;  
+
+    // Number of messages currenlty stored
+    size_t size_ = 0;      
+    
+    // Number of messages the current array can hold
+    size_t capacity_ = 0;      
 };

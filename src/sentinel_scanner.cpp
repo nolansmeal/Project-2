@@ -1,10 +1,12 @@
 #include "core/sentinel_scanner.h"
 
+// Stores the sentinel that the scanner will look for
 SentinelScanner::SentinelScanner(string sentinel) {
     sentinel_ = sentinel;
     pending_ = "";
 }
 
+// Processes a new chunk of text and checks for the sentinel
 SentinelScanner::Out SentinelScanner::feed(string_view chunk) {
     string text = pending_ + string(chunk);
     pending_ = "";
@@ -31,6 +33,7 @@ SentinelScanner::Out SentinelScanner::feed(string_view chunk) {
     return {safe, false};
 }
 
+// Returns any text still being held when the stream is finished
 SentinelScanner::Out SentinelScanner::flush() {
     string safe = pending_;
     pending_ = "";
