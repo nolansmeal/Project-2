@@ -198,12 +198,21 @@ void testScannerFalseAlarm() {
 }
 
 void testScannerLargeInput() {
-    SentinelScanner scanner("<|end_conversation|>");
+    string sentinel = "<|end_conversation|>";
+    SentinelScanner scanner(sentinel);
 
     string output;
+    string input;
 
-    for (int i = 0; i < 100000; i++) {
-        auto result = scanner.feed("a");
+    for (int i = 0; i < 10000; i++) {
+        input += "<|end_";
+    }
+
+    // Feed the input one character at a time
+    for (size_t i = 0; i < input.size(); i++) {
+        string oneCharacter(1, input[i]);
+
+        auto result = scanner.feed(oneCharacter);
 
         assert(result.sentinel_found == false);
 
@@ -213,7 +222,7 @@ void testScannerLargeInput() {
     auto end = scanner.flush();
     output += end.safe_text;
 
-    assert(output.size() == 100000);
+    assert(output == input);
 }
 
 void testHarnessTurnLimit() {
@@ -260,9 +269,6 @@ void testHarnessSentinelHalt() {
 
    StopReason reason = harness.run(input, output);
 
-cout << "Stop reason: " << static_cast<int>(reason.kind) << endl;
-cout << "Detail: " << reason.detail << endl;
-cout << "Output: " << output.output() << endl;
 
 assert(reason.kind == StopReason::Kind::Sentinel);
 
@@ -303,6 +309,28 @@ void testTranscriptRoundTrip() {
     remove("replay_test.txt");
 }
 
+void testHarnessEOF() {
+    unique_ptr<ModelClient> model =
+        make_unique<ScriptedModelClient>("scripts/greeting.script");
+
+    HarnessConfig config;
+    config.max_turns = 4;
+
+    Harness harness(std::move(model), config);
+
+    // No user input means the input source is immediately at EOF
+    TestInput input({});
+    TestOutput output;
+
+    StopReason reason = harness.run(input, output);
+
+    // The harness should stop because it reached EOF
+    assert(reason.kind == StopReason::Kind::UserExit);
+
+    // No messages should have been added
+    assert(harness.conversation().size() == 0);
+}
+
 int main() {
 
     testEmptyConversation();
@@ -318,9 +346,10 @@ int main() {
 
     testHarnessTurnLimit();
     testHarnessSentinelHalt();
+    testHarnessEOF();
     testTranscriptRoundTrip();
 
-    cout << "All 12 tests passed!" << endl;
+    cout << "All 13 tests passed!" << endl;
 
     return 0;
 }
